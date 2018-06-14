@@ -2,7 +2,7 @@
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # created by P. Renee Carnley for CSC 842 Green Team Cycle 5  #
-# Scrapper is a simiple web scrappig tool to gather web files #
+# Scrapper is a simiple web scrapig tool to gather web files #
 # ****DISCLAIMER - author is not responsible for illegal use  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
