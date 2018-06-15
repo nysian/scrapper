@@ -2,12 +2,12 @@
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # created by P. Renee Carnley for CSC 842 Green Team Cycle 5  #
-# Scrapper is a simiple web scrapig tool to gather web files #
+# Scrapper is a simiple web scraping tool to gather web files #
 # ****DISCLAIMER - author is not responsible for illegal use  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 from bs4 import BeautifulSoup
-import os
+import os.path
 import requests
 import sys
 
@@ -15,11 +15,12 @@ website = sys.argv[1] #set varioble website to user defined website
 webpage = requests.get(website, timeout=5) #attempt to download website & load response
 
 tempname = website.split(".")
+filepath = 'C:/webcrawler'
 
 if webpage.status_code == 200:
     soup = BeautifulSoup(webpage.content, 'html.parser')
 
-    filename = "\\" + tempname[1] + ".txt"
+    filename = filepath + "\\" + tempname[1] + ".txt"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "w") as f:
         f.write(str(soup))
