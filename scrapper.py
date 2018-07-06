@@ -13,6 +13,7 @@ import requests
 import sys
 import tkinter as tk
 
+
 #Check if webpage request succeeded
 def iswebStatusOk(webpageurl):
     if webpageurl.status_code == 200:
@@ -27,49 +28,84 @@ def createDirectory(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+def writeFile(content, file, permission):
+    os.makedirs(os.path.dirname(file), exist_ok=True)
+    with open(file, permission, encoding="utf-8") as f:
+        f.write(str(content))
+
+def readFile(file):
+    array = []
+    try:
+        sites = open(file)
+        for line in sites.read().split():
+            array.append(line)
+        return array
+    except IOError:
+        print("File not found")
+
 def main():
-    website = sys.argv[1] #set varioble website to user defined website
-    webpage = requests.get(website, timeout=5) #attempt to download website & load response
+    sitefile = sys.argv[1] #get file path
+    websites = readFile(sitefile) #set array websites to the user defined ones from given file
 
-    tempname = website.split(".") #break url into an array get name of website
-    websiteName = tempname[1] #get the name of website
-    filepath = 'C:\\' + websiteName #set filepath name with website name
-    directory = os.path.dirname(filepath) #set directory path with website name
+    i = 0
+    while i < len(websites):
+        try:
+            website = str(websites[i])
+            webpage = requests.get(website, timeout=5) #attempt to download website & load response
 
-    #check directory & create it with website name
-    createDirectory(directory)
+            tempname = website.split(".") #break url into an array get name of website
+            websiteName = tempname[1] #get the name of website
+            filepath = 'C:\\' + websiteName #set filepath name with website name
+            directory = os.path.dirname(filepath) #set directory path with website name
 
+            #check directory & create it with website name
+            createDirectory(directory)
 
-    if iswebStatusOk(webpage):
-        #get robots.txt files
-        robotstxt = webpage + '\\robots.txt'
+            if iswebStatusOk(webpage):
+                #get robots.txt files
+                robotstxt = website + '/robots.txt'
+                robotpage = requests.get(robotstxt, timeout=5) #attempt to download robots.txt and load response
 
-        if iswebStatusOK(robotstxt):
-            soup = BeautifulSoup(robotstxt.content, 'html.parser')
-            print soup
-        else:
-            print
+                if iswebStatusOk(robotpage):
+                    soup = BeautifulSoup(robotpage.content, 'html.parser')
+                    filename = filepath + "\\robots.txt"
+                    permission = "w"
+                    writeFile(soup, filename, permission)
+                else:
+                    print("Unable to load robots.txt")
 
+                #get html from website & store it in a file
+                soup = BeautifulSoup(webpage.content, 'html.parser')
+                filename = filepath + "\\" + websiteName + ".html"
+                permission = "w"
+                writeFile(soup, filename, permission)
 
+                #get links from website & store it in a file
+                filename = filepath + "\\links.txt"
+                permission = "a+"
+                data = webpage.text
+                soup = BeautifulSoup(data, "lxml")
+                for link in soup.find_all('a'):
+                    writeFile(link.get('href'), filename, permission)
+                    writeFile("\n", filename, permission)
 
+                #get img tags from website & store it in a file
+                filename = filepath + "\\images.txt"
+                permission = "a+"
+                data = webpage.text
+                soup = BeautifulSoup(data, "lxml")
+                #for image in soup.find_all("img")
+                    #image = image.get('src')
+                #print(image)
 
+                print("Successfully downloaded " + website)
+            else:
+                print('Unable to download ' + website + ' with error code ' + webpage.status_code)
+        except:
+            print("Unable to download " + website)
+            pass
 
-    #check if webpage request succeeded
-    if webpage.status_code == 200:
-        soup = BeautifulSoup(webpage.content, 'html.parser')
-
-        filename = filepath + "\\" + tempname[1] + ".txt"
-
-        os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with open(filename, "w") as f:
-            f.write(str(soup))
-
-        print ('Successfully downloaded ' + website)
-        data = webpage.text
-        soup = BeautifulSoup(data, "lxml")
-        for link in soup.find_all('a'):
-            print(link.get('href'))
-    else:
-        print('Unable to download ' + website + ' with error code ' + webpage.status_code)
-
+        i += 1
 #print(webpage.content)
+
+main()
