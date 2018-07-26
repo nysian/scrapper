@@ -1,7 +1,10 @@
 scrapper.py
 
-Simple web scraping tool that gathers data from a website
-Scrapper was written and tested on Windows 10 but theoretically using python which should run on any OS
+Simple web scraping tool that gathers data from websites
+Built on Windows 10
+Python 3.6.5
+Utilizes BeautifulSoup 4.6.0 libraries - https://pypi.org/project/beautifulsoup4/
+
 Run Scrapper
     First create a text file with the list of websites
     Scrapper is run from the command line as administrator
