@@ -53,7 +53,15 @@ def readFile(file):
         return "Error"
 
 #scan ports
-def knocker(website, timeout, randomizer, numports):
+def knocker(website, timeout, randomizer, numports, filepath):
+    #create scan report Directory
+    scanpath = filepath + "\\scans"
+    directory = os.path.dirname(scanpath)
+    createDirectory(directory)
+
+    filename = filepath + "\\scanReport.txt"
+    permission = "a+"
+
     #check for open ports
     try:
         #initialize variables for counting number of open and closed ports
@@ -64,7 +72,7 @@ def knocker(website, timeout, randomizer, numports):
         totalports = 65535
         server = socket.gethostbyname(website) #get the IP address of the website
 
-        print ('knocking on ' + website + ' at ip: ' + server)
+        print ('\nknocking on ' + website + ' at ip: ' + server)
         #knock on ports
         for i in range(1, numports):
             soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -88,6 +96,8 @@ def knocker(website, timeout, randomizer, numports):
                 numClosed += 1
             soc.close()
 
+        print ('Number of open ports {} Number of closed ports {}'.format(numOpen, numClosed))
+
     #catch if bad website name
     except socket.gaierror:
         print ('Website name failed ')
@@ -108,8 +118,6 @@ def knocker(website, timeout, randomizer, numports):
         soc.close() #ensure socket is closed before exiting
         sys.exit()
 
-    print ('Number of open ports {} Number of closed ports {}'.format(numOpen, numClosed))
-
 def main():
     sitefile = input("\nEnter the path and name of the URL file: \n") #get file path
     websites = readFile(sitefile) #set array websites to the user defined ones from given file
@@ -121,18 +129,18 @@ def main():
 
     userpath = input("\nEnter the path and name of directory where you want the scrapped files stored: \n")
 
-    toknock = input("\nDo you wish to port scan the websites y/n\n")
+    toknock = input("\nDo you wish to port scan the websites y/n ")
     if(toknock == "y"):
        print("\nDo you wish to use default settings?")
-       default = input("\nRandomizer is off, Socket time out is 3 seconds, and number of ports is 65536? y/n\n")
+       default = input("   Randomizer is off, Socket time out is 3 seconds, and number of ports is 65536? y/n ")
        if(default == "y"):
            timeout = 3
            random = "n"
            ports = 65536
        else:
            timeout = int(input("\nEnter the number of seconds till socket timeout: "))
-           random = input("\nTurn randomizer on? y/n")
-           ports = int(input("\nEnter the number of ports to scan (1 thru 65536): "))
+           random = input("\nTurn randomizer on? y/n ")
+           ports = int(input("\nEnter the number of ports to scan (1 thru 65536): ")) + 1
 
     i = 0
     while i < len(websites):
@@ -187,7 +195,7 @@ def main():
 
                 print("\nSuccessfully downloaded " + website + " in directory " + filepath)
 
-                knocker(websiteName, timeout, random, ports)
+                knocker(websiteName, timeout, random, ports, filepath)
 
             else:
                 print('Unable to download ' + website + ' with error code ' + webpage.status_code)
