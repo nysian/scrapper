@@ -5,8 +5,9 @@ Scrapper was written and tested on Windows 10 but theoretically using python whi
 Run Scrapper
     First create a text file with the list of websites
     Scrapper is run from the command line as administrator
-    Ex: python scrapper.py websites.txt
-Creates a directory in C with name of website
-    Will save all links found on the webpage in a .txt file
-    Will save html to directory as .html
-    Will save the robots.txt file
+                       Ex: python scrapper.py 
+    Scrapper will prompt for location of website list
+    Scrapper will prompt for where the user wants the scraped files stored
+    Scrapper will ask if the user wants to perform a port scan of the website
+    If yes to port scanning, scrapper will prompt the user for settings or allow the user to use the default settings
+
